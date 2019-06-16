@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/csv"
+	`net/http`
 	"os"
 	"sync"
 )
@@ -11,7 +12,7 @@ import (
 // digest authentication, properly encrypted password for basic).
 //
 // Returning an empty string means failing the authentication.
-type SecretProvider func(user, realm string) string
+type SecretProvider func(r *http.Request, user, realm string) string
 
 // File handles automatic file reloading on changes.
 type File struct {
@@ -82,7 +83,7 @@ func reloadHTDigest(hf *HtdigestFile) {
 func HtdigestFileProvider(filename string) SecretProvider {
 	hf := &HtdigestFile{File: File{Path: filename}}
 	hf.Reload = func() { reloadHTDigest(hf) }
-	return func(user, realm string) string {
+	return func(r *http.Request, user, realm string) string {
 		hf.ReloadIfNeeded()
 		hf.mu.RLock()
 		defer hf.mu.RUnlock()
@@ -138,7 +139,7 @@ func reloadHTPasswd(h *HtpasswdFile) {
 func HtpasswdFileProvider(filename string) SecretProvider {
 	h := &HtpasswdFile{File: File{Path: filename}}
 	h.Reload = func() { reloadHTPasswd(h) }
-	return func(user, realm string) string {
+	return func(r *http.Request, user, realm string) string {
 		h.ReloadIfNeeded()
 		h.mu.RLock()
 		password, exists := h.Users[user]

@@ -69,7 +69,7 @@ func (a *BasicAuth) CheckAuth(r *http.Request) string {
 		return ""
 	}
 
-	secret := a.Secrets(user, a.Realm)
+	secret := a.Secrets(r, user, a.Realm)
 	if secret == "" {
 		return ""
 	}

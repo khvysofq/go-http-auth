@@ -173,7 +173,7 @@ func (da *DigestAuth) CheckAuth(r *http.Request) (username string, authinfo *str
 		}
 	}
 
-	HA1 := da.Secrets(auth["username"], da.Realm)
+	HA1 := da.Secrets(r, auth["username"], da.Realm)
 	if da.PlainTextSecrets {
 		HA1 = H(auth["username"] + ":" + da.Realm + ":" + HA1)
 	}

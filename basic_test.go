@@ -28,7 +28,7 @@ var basicCredentials = []credentials{
 	{"test16", "topsecret"},
 }
 
-func basicProvider(user, realm string) string {
+func basicProvider(r *http.Request, user, realm string) string {
 	return basicSecrets[user]
 }
 
